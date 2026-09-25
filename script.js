@@ -1375,7 +1375,7 @@ Thank you!`;
 
 /* =========================================================
    FOOTER WATER
-   Water surface forms the top edge of the footer
+   Interactive water surface
 ========================================================= */
 
 (() => {
@@ -1389,7 +1389,7 @@ Thank you!`;
   let height = 0;
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-  const points = [];
+  const waves = [];
   const ripples = [];
 
   const pointer = {
@@ -1400,9 +1400,11 @@ Thank you!`;
     active: false
   };
 
-  const footer = canvas.closest(".site-footer");
+  /* ---------------------------------------------------------
+     RESIZE
+  --------------------------------------------------------- */
 
-  function resize() {
+  function resizeFooterWater() {
     const rect = canvas.getBoundingClientRect();
 
     width = rect.width;
@@ -1413,215 +1415,318 @@ Thank you!`;
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
 
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(
+      dpr,
+      0,
+      0,
+      dpr,
+      0,
+      0
+    );
 
-    createSurface();
+    createWaves();
   }
 
-  function createSurface() {
-    points.length = 0;
+  /* ---------------------------------------------------------
+     BASE WAVES
+  --------------------------------------------------------- */
 
-    const spacing = 12;
-    const count = Math.ceil(width / spacing) + 2;
+  function createWaves() {
+    waves.length = 0;
 
-    for (let i = 0; i < count; i++) {
-      points.push({
-        x: i * spacing,
-        y: 35,
-        velocity: 0
+    for (let i = 0; i < 4; i++) {
+      waves.push({
+        amplitude: 5 + i * 2,
+        wavelength: 170 + i * 55,
+        speed: .0007 + i * .00025,
+        phase: Math.random() * Math.PI * 2,
+        opacity: .18 - i * .025
       });
     }
   }
 
-  footer.addEventListener("pointermove", event => {
-    const rect = footer.getBoundingClientRect();
+  /* ---------------------------------------------------------
+     POINTER
+  --------------------------------------------------------- */
 
-    pointer.targetX =
-      (event.clientX - rect.left) / rect.width;
+  const footer = canvas.closest(".site-footer");
 
-    pointer.targetY =
-      (event.clientY - rect.top) / rect.height;
+  footer.addEventListener(
+    "pointermove",
+    event => {
 
-    pointer.active = true;
+      const rect = footer.getBoundingClientRect();
 
-    /*
-      Only interact strongly when the cursor
-      is close to the water surface.
-    */
-    if (pointer.targetY < 0.18) {
+      const x =
+        (event.clientX - rect.left) /
+        rect.width;
 
-      const px = pointer.targetX * width;
+      const y =
+        (event.clientY - rect.top) /
+        rect.height;
 
-      for (const point of points) {
-
-        const distance = point.x - px;
-
-        const influence =
-          Math.exp(-(distance * distance) / 9000);
-
-        point.velocity += influence * 1.8;
-      }
-
-      ripples.push({
-        x: px,
-        strength: 1
-      });
-
-      if (ripples.length > 12) {
-        ripples.shift();
-      }
-    }
-  }, { passive: true });
-
-  footer.addEventListener("pointerleave", () => {
-    pointer.active = false;
-  });
-
-  function animate(time) {
-
-    /*
-      Smooth the pointer
-    */
-    pointer.x +=
-      (pointer.targetX - pointer.x) * 0.08;
-
-    pointer.y +=
-      (pointer.targetY - pointer.y) * 0.08;
-
-    /*
-      Water physics
-    */
-    for (let i = 0; i < points.length; i++) {
-
-      const point = points[i];
-
-      point.velocity +=
-        Math.sin(
-          time * 0.0015 +
-          point.x * 0.018
-        ) * 0.012;
-
-      point.velocity *= 0.94;
-
-      point.y += point.velocity;
+      pointer.targetX = x;
+      pointer.targetY = y;
+      pointer.active = true;
 
       /*
-        Return to natural water level
+        Only create ripples when the pointer
+        is close to the water surface.
       */
-      point.y +=
-        (35 - point.y) * 0.035;
-    }
 
-    /*
-      Ripple propagation
-    */
-    for (let i = ripples.length - 1; i >= 0; i--) {
+      if (y < .15) {
 
-      const ripple = ripples[i];
+        ripples.push({
+          x: x * width,
+          strength: 1,
+          radius: 5,
+          speed: 1.2
+        });
 
-      ripple.x += 3;
-
-      ripple.strength *= 0.96;
-
-      if (ripple.strength < 0.03) {
-        ripples.splice(i, 1);
+        if (ripples.length > 18) {
+          ripples.shift();
+        }
       }
-    }
+    },
+    { passive: true }
+  );
 
-    ctx.clearRect(0, 0, width, height);
+  footer.addEventListener(
+    "pointerleave",
+    () => {
+      pointer.active = false;
+    }
+  );
+
+  /* ---------------------------------------------------------
+     DRAW
+  --------------------------------------------------------- */
+
+  function draw(time) {
+
+    pointer.x +=
+      (pointer.targetX - pointer.x) * .08;
+
+    pointer.y +=
+      (pointer.targetY - pointer.y) * .08;
+
+    ctx.clearRect(
+      0,
+      0,
+      width,
+      height
+    );
 
     /*
-      -------------------------------------------------
-      DRAW THE FOOTER BODY
-      -------------------------------------------------
+      Base water surface
     */
+
+    const gradient =
+      ctx.createLinearGradient(
+        0,
+        0,
+        0,
+        height
+      );
+
+    gradient.addColorStop(
+      0,
+      "rgba(140,236,249,.55)"
+    );
+
+    gradient.addColorStop(
+      .35,
+      "rgba(84,116,148,.18)"
+    );
+
+    gradient.addColorStop(
+      1,
+      "rgba(17,46,98,0)"
+    );
+
+    ctx.fillStyle = gradient;
 
     ctx.beginPath();
 
-    ctx.moveTo(0, points[0].y);
+    ctx.moveTo(0, height);
 
-    for (let i = 1; i < points.length; i++) {
+    for (let x = 0; x <= width; x += 4) {
 
-      const p = points[i];
+      let y = 38;
 
-      ctx.lineTo(p.x, p.y);
+      /*
+        Natural wave motion
+      */
+
+      for (const wave of waves) {
+
+        y +=
+          Math.sin(
+            x / wave.wavelength +
+            time * wave.speed +
+            wave.phase
+          ) *
+          wave.amplitude;
+      }
+
+      /*
+        Pointer creates local displacement
+      */
+
+      if (pointer.active) {
+
+        const pointerX =
+          pointer.x * width;
+
+        const distance =
+          Math.abs(x - pointerX);
+
+        const influence =
+          Math.max(
+            0,
+            1 - distance / 260
+          );
+
+        const movement =
+          (
+            pointer.targetY -
+            pointer.y
+          ) * 80;
+
+        y +=
+          influence *
+          movement;
+      }
+
+      /*
+        Mouse-created ripples
+      */
+
+      for (const ripple of ripples) {
+
+        const distance =
+          Math.abs(x - ripple.x);
+
+        const waveDistance =
+          Math.abs(
+            distance -
+            ripple.radius
+          );
+
+        const influence =
+          Math.max(
+            0,
+            1 -
+            waveDistance / 70
+          );
+
+        y -=
+          Math.sin(
+            waveDistance * .12
+          ) *
+          influence *
+          ripple.strength *
+          8;
+      }
+
+      if (x === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
     }
 
     ctx.lineTo(width, height);
     ctx.lineTo(0, height);
     ctx.closePath();
 
-    ctx.fillStyle = "#112e62";
     ctx.fill();
 
     /*
-      -------------------------------------------------
-      WATER SURFACE HIGHLIGHT
-      -------------------------------------------------
+      Highlight line along the water surface
     */
 
     ctx.beginPath();
 
-    ctx.moveTo(0, points[0].y);
+    for (let x = 0; x <= width; x += 4) {
 
-    for (let i = 1; i < points.length; i++) {
+      let y = 38;
 
-      ctx.lineTo(
-        points[i].x,
-        points[i].y
-      );
-    }
+      for (const wave of waves) {
 
-    ctx.strokeStyle =
-      "rgba(140,236,249,.75)";
+        y +=
+          Math.sin(
+            x / wave.wavelength +
+            time * wave.speed +
+            wave.phase
+          ) *
+          wave.amplitude;
+      }
 
-    ctx.lineWidth = 2;
+      if (pointer.active) {
 
-    ctx.stroke();
+        const pointerX =
+          pointer.x * width;
 
-    /*
-      -------------------------------------------------
-      SUBTLE WATER GLOW
-      -------------------------------------------------
-    */
+        const distance =
+          Math.abs(x - pointerX);
 
-    ctx.beginPath();
+        const influence =
+          Math.max(
+            0,
+            1 - distance / 250
+          );
 
-    for (let i = 0; i < points.length; i++) {
+        y +=
+          influence *
+          (
+            pointer.targetY -
+            pointer.y
+          ) *
+          80;
+      }
 
-      const p = points[i];
-
-      if (i === 0) {
-        ctx.moveTo(
-          p.x,
-          p.y + 5
-        );
+      if (x === 0) {
+        ctx.moveTo(x, y);
       } else {
-        ctx.lineTo(
-          p.x,
-          p.y + 5
-        );
+        ctx.lineTo(x, y);
       }
     }
 
     ctx.strokeStyle =
-      "rgba(255,255,255,.18)";
+      "rgba(255,255,255,.42)";
 
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.5;
 
     ctx.stroke();
 
-    requestAnimationFrame(animate);
+    /*
+      Update ripples
+    */
+
+    for (let i = ripples.length - 1; i >= 0; i--) {
+
+      const ripple = ripples[i];
+
+      ripple.radius += ripple.speed;
+      ripple.strength *= .965;
+
+      if (ripple.strength < .03) {
+        ripples.splice(i, 1);
+      }
+    }
+
+    requestAnimationFrame(draw);
   }
 
   window.addEventListener(
     "resize",
-    resize,
+    resizeFooterWater,
     { passive: true }
   );
 
-  resize();
+  resizeFooterWater();
 
-  requestAnimationFrame(animate);
+  requestAnimationFrame(draw);
 
 })();
