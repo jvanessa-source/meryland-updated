@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meryland Laundromat</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a14b87d399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="navbar navbar-expand-lg bg-light shadow-sm">
+  <div class="container">
+
+    <a class="navbar-brand" href="index.html">
+      <img
+        src="images/logo.jpg"
+        alt="Meryland logo"
+        width="45"
+        height="45"
+        class="d-inline-block align-text-center"
+      >
+      Meryland
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <ul class="navbar-nav ms-auto">
+
+        <li class="nav-item">
+          <a class="nav-link active" href="index.html">Home</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="services.html">Services</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="about.html">About Us</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="contact.html">
+            Contact
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="booking.html">
+            Book
+          </a>
+        </li>
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Hero / interactive laundry reveal -->
+<section class="hero-image laundry-reveal" aria-label="Interactive garment cleaning experience">
+  <div class="laundry-reveal__scene">
+    <canvas
+      class="laundry-reveal__canvas"
+      aria-label="Interactive dirty to clean garment"
+    ></canvas>
+
+    <!-- Replace these two paths with the final perfectly registered photographs.
+         They are kept as actual image elements so the project has an accessible,
+         inspectable source and a graceful fallback if WebGL is unavailable. -->
+    <img class="laundry-reveal__source laundry-reveal__source--dirty"
+         src="images/evening-dress-dirty-1920x1080.svg"
+         alt="White cotton T-shirt before washing">
+    <img class="laundry-reveal__source laundry-reveal__source--clean"
+         src="images/evening-dress-clean-1920x1080.svg"
+         alt="The same white cotton T-shirt freshly cleaned">
+
+    <div class="laundry-reveal__copy hero-text">
+      <span class="laundry-reveal__eyebrow">MERYLAND CARE</span>
+      <h1>Professional Laundry Services</h1>
+      <p>Reliable, affordable, and always spotless.</p>
+      <a href="services.html" class="btn-primary">Explore Services</a>
+    </div>
+
+    <div class="laundry-reveal__instruction" aria-hidden="true">MOVE TO CLEAN</div>
+    <div class="laundry-reveal__complete" aria-live="polite">FRESHLY CLEAN</div>
+  </div>
+</section>
+
+<!-- About Preview -->
+<section class="about">
+  <h2>About Us</h2>
+  <p>At Meryland Laundromat, we’ve been keeping clothes fresh and spotless for over 5 years.</p>
+  <p>From laundry to ironing and repairs, we provide the care your clothes deserve.</p>
+  <a href="about.html" class="btn-primary">Learn More</a>
+</section>
+
+<!-- Services Preview -->
+<section class="services">
+  <h2>Our Services</h2>
+  <div class="service-grid">
+    <div class="service-item">
+      <img src="images/laundry-services.jpg" alt="Laundry">
+      <h3>Laundry</h3>
+      <p>Keep your clothes clean and fresh.</p>
+    </div>
+    <div class="service-item">
+      <img src="images/Ironing_1600x.webp" alt="Ironing">
+      <h3>Ironing</h3>
+      <p>Enjoy crisp, wrinkle-free garments.</p>
+    </div>
+    <div class="service-item">
+      <img src="images/clothingrepairs.jpg" alt="Repairs">
+      <h3>Clothing Repairs</h3>
+      <p>Give your favorite pieces a second life.</p>
+    </div>
+    <div class="service-item">
+      <img src="images/expresslaundry.webp" alt="Express Laundry">
+      <h3>Express Laundry</h3>
+      <p>Quick washes when you need them fast.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Booking CTA -->
+<section class="booking-cta">
+  <h2>Ready to Book?</h2>
+  <p>Fresh, ready-to-wear clothes are just a booking away.</p>
+  <a href="booking.html" class="btn-primary">Book a Service</a>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+
+  <!-- Interactive water surface -->
+  <div class="footer-water" aria-hidden="true">
+    <canvas id="footerWater"></canvas>
+  </div>
+
+  <div class="footer-content">
+
+    <!-- Brand -->
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo">
+        <img src="images/logo.jpg" alt="Meryland logo">
+        <span>Meryland</span>
+      </a>
+
+      <p>
+        Care for every garment.<br>
+        Clean. Fresh. Ready.
+      </p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="footer-column">
+      <h3>Explore</h3>
+
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-column">
+      <h3>Get in touch</h3>
+
+      <a
+        href="https://wa.me/573043708470"
+        target="_blank"
+        rel="noopener"
+        class="footer-whatsapp"
+      >
+        <i class="fa-brands fa-whatsapp"></i>
+        WhatsApp
+      </a>
+
+      <a href="tel:+573043708470">
+        <i class="fa-solid fa-phone"></i>
+        +57 304 370 8470
+      </a>
+
+      <a href="booking.html">
+        <i class="fa-solid fa-calendar-check"></i>
+        Book a Service
+      </a>
+    </div>
+
+    <!-- Hours -->
+    <div class="footer-column">
+      <h3>Opening Hours</h3>
+
+      <div class="footer-hours">
+        <div>
+          <span>Mon – Fri</span>
+          <strong>8am – 6pm</strong>
+        </div>
+
+        <div>
+          <span>Saturday</span>
+          <strong>8am – 5pm</strong>
+        </div>
+
+        <div>
+          <span>Sunday</span>
+          <strong>Closed</strong>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+
+    <p>
+      © 2026 Meryland. All rights reserved.
+    </p>
+
+    <div class="footer-social">
+      <a
+        href="https://www.instagram.com/merylandlav/"
+        target="_blank"
+        rel="noopener"
+        aria-label="Meryland on Instagram"
+      >
+        <i class="fa-brands fa-instagram"></i>
+      </a>
+    </div>
+
+  </div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
